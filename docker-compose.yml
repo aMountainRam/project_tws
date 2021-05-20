@@ -2,14 +2,16 @@ version: '3.8'
 
 services:
     mongodb:
+        image: mongo:latest
+        hostname: database.servicetws.com
         networks:
             - ring
         ports:
             - 27017:27017
-        image: mongo:latest
         volumes:
             - mongodb-data:/data/db
             - ./mongodb/mongod.conf:/etc/mongod.conf
+            - ./mongodb/ssl:/etc/ssl
 
 networks:
     ring:

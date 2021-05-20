@@ -7,10 +7,11 @@
 .vscode/
 
 # certificate authorization
-./ca
+ca/
 *.pem
 *.crt
 *.key
+ssl_passphrase.txt
 
 ## FROM ==> https://github.com/github/gitignore
 # python venv
