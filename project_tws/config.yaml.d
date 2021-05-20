@@ -16,3 +16,12 @@ services:
         # [ passphrase: [<none> (default), string]]
         # [ outpassphrase: [ <filepath> (default to keys folder), stdout ]]
 
+ca:
+    context: ca
+    name: ca
+    c: IT
+    st: Brescia
+    l: Sirmione
+    o: A Mountain Ram & Co.
+    ou: Certificate Authority
+    cn: ca

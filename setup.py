@@ -4,32 +4,30 @@ from project_tws import ca
 from project_tws import arguments
 import yaml
 
-def main():
+def run():
+    parsed_arguments = arguments.get_parser().parse_args()
     try:
-        config_file = open("./project_tws/config.yml.d", 'r')
-        config = yaml.load(config_file, Loader=yaml.FullLoader)
-        print("Key: Value")
-        for key, value in config.items():
-            print(f"{key}: {value}")
+        config = yaml.load(parsed_arguments.config, Loader=yaml.FullLoader)
     except FileNotFoundError:
         print("Cannot find a configuration file")
         exit(1)
 
-    parsed_arguments = arguments.get_parser().parse_args()
     command = parsed_arguments.command
     subcommand = parsed_arguments.subcommand
+
     if(command == 'ca'):
+        ca.setup(parsed_arguments,config)
         if(subcommand == 'remove'):
             ca.remove()
         if(subcommand == 'create'):
-            ca.setup(parsed_arguments)
-            ca.create_ca(config)
+            ca.create_ca()
         elif(subcommand == 'sign'):
-            pass
-        else:
-            exit(0)
-    else:
-        exit(0)
+            ca.sign_ca()
+
+    if parsed_arguments.remove:
+        ca.remove()
+
+    exit(0)
 
 if __name__ == "__main__":
-    main()
+    run()
