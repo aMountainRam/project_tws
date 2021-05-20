@@ -6,8 +6,13 @@ from cryptography.x509.oid import NameOID
 from datetime import datetime, timedelta
 from pathlib import Path
 import uuid
+import shutil
 
 ONE_YEAR = timedelta(365, 0, 0)
+args = {}
+def setup(a):
+    global args
+    args = a
 
 class CertificateAuthority:
     def __init__(self, key) -> None:
@@ -69,12 +74,23 @@ class CertificateAuthority:
         self.dump_key(passphrase, dir, filename, options.replace('w', 'a'))
 
 
-def create_ca(key_size=2048) -> CertificateAuthority:
+def create_ca(config,key_size=2048) -> CertificateAuthority:
+    ca_dir = Path("./ca")
+    if ca_dir.exists() & ~args.yes:
+        print(f"Certificate authority's folder already exists. If you want to overwrite use '-y/--yes'")
+        exit(1)
+
+    ca_dir.mkdir(parents=True, exist_ok=True)
+
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=key_size,
         backend=default_backend()
     )
+
+    if(args.remove):
+        remove()
+
     return CertificateAuthority(private_key)
 
 
@@ -90,3 +106,10 @@ def load_ca_from_pem_cert(path, passphrase=''):
             data, passphrase, default_backend())
         print(cert)
         print(pem_key)
+
+def remove():
+    if Path("./ca").exists():
+        shutil.rmtree(Path("./ca"))
+    else:
+        print("No ca folder available. Nothing to do")
+    exit(0)

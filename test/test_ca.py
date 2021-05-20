@@ -11,7 +11,13 @@ class Testing(unittest.TestCase):
         my_ca = ca.create_ca()
         assert_that(my_ca.certs).is_empty()
 
-    def test_sign_certificate(self):
+    def test_sign_certificate_and_expiration_dates(self):
+        """TEST: sign certificate and che the expiration dates
+        It should create a certificate within the given CA context. Such certificate must have proper
+        start and exipration time.
+        Likewise another certificate is create with a different lifespan.
+        Lifespan must check out.
+        """
         cn = "commonName"
         c = "AA"
         my_ca = ca.create_ca()
