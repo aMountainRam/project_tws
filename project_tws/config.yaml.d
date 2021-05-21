@@ -12,7 +12,7 @@ services:
         sslMode: CRT # [PEM,CRT]
         certs: ssl
         keys: ssl
-        ou: client
+        ou: servicetws
     database:
         context: mongodb
         sslMode: PEM # [PEM,CRT]
@@ -22,6 +22,12 @@ services:
         ou: servicetws
         # [ passphraseMode: [random (default), nopassphrase, user] ]
         # [ outpassphrase: [ <filepath> (default to keys folder), stdout ]]
+    backend:
+        context: backend
+        sslMode: CRT # [PEM,CRT]
+        certs: ssl
+        keys: ssl
+        ou: servicetws
 
 ca:
     context: ca
