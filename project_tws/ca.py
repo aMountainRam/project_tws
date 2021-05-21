@@ -66,14 +66,17 @@ class KeyPairHolder:
         else:
             raise InternalError("Cannot find a certificate")
 
-    def request(self, subject, issuer, service_host):
+    def request(self, subject, ca_public_key, service_host, include_host=False):
+        dnss = [x509.DNSName(f"{service_host}"), x509.DNSName(f"www.{service_host}")]
+        if include_host:
+            dnss.append(x509.DNSName(config["domain"]["name"]))
         # notice that in rfc3280 nonRepudiation == contentCommitment
         csr = x509.CertificateSigningRequestBuilder().subject_name(subject
-            ).add_extension(x509.AuthorityKeyIdentifier.from_issuer_public_key(self.key.public_key()),critical=False
+            ).add_extension(x509.AuthorityKeyIdentifier.from_issuer_public_key(ca_public_key),critical=False
             ).add_extension(x509.BasicConstraints(ca=False, path_length=None),critical=False
             ).add_extension(x509.KeyUsage(True, True, True, True, False, False, False, False, False), critical=False
             ).add_extension(x509.ExtendedKeyUsage([ExtendedKeyUsageOID.CLIENT_AUTH, ExtendedKeyUsageOID.SERVER_AUTH]), critical=False
-            ).add_extension(x509.SubjectAlternativeName([x509.DNSName(f"{service_host}"), x509.DNSName(f"www.{service_host}")]),critical=False
+            ).add_extension(x509.SubjectAlternativeName(dnss),critical=False
             ).sign(private_key=self.key, algorithm=hashes.SHA256(), backend=default_backend())
 
         self.csrs.append(csr)
@@ -100,8 +103,8 @@ class KeyPairHolder:
                 ))
 
     def dump_pem_cert(self, dir, filename, passphrase='', options='wb'):
-        self.dump_cert(dir, filename, options)
-        self.dump_key(dir, filename, passphrase, options.replace('w', 'a'))
+        self.dump_key(dir, filename, passphrase, options)
+        self.dump_cert(dir, filename, options.replace('w', 'a'))
 
 
 class CertificateAuthority(KeyPairHolder):
@@ -126,7 +129,8 @@ class CertificateAuthority(KeyPairHolder):
             x509.NameAttribute(NameOID.COMMON_NAME, cn)
         ])
 
-        today = datetime.today()
+        today = datetime.utcnow()\
+            .replace(hour=0, minute=0, second=0, microsecond=0)
         builder = x509.CertificateBuilder()\
             .subject_name(name)\
             .issuer_name(name)\
@@ -145,12 +149,13 @@ class CertificateAuthority(KeyPairHolder):
         return ca_cert
 
     def sign_request(self, csr):
-        today = datetime.today()
+        today = datetime.utcnow()\
+            .replace(hour=0, minute=0, second=0, microsecond=0)
         starts = timedelta(0)
         ends = ONE_YEAR
         ca_cert = self.get_certificate()
 
-        cert = x509.CertificateBuilder().subject_name(csr.subject
+        cert = x509.CertificateBuilder(extensions=csr.extensions).subject_name(csr.subject
             ).issuer_name(ca_cert.subject
             ).public_key(csr.public_key()
             ).serial_number(x509.random_serial_number()
@@ -258,26 +263,31 @@ def sign_ca():
         exit(1)
 
     for name in service_names:
-        host = f"{name}.{config['domain']['name']}"
+        service_host = f"{name}.{config['domain']['name']}"
         service = KeyPairHolder()
         ca_cert = authority.get_certificate()
-        issuer_public_key = authority.key.public_key()
+        opts = services[name]
         if isinstance(ca_cert, Certificate):
+            cn = name
+            if "cn" in opts:
+                cn = opts["cn"]
+            ou = ca["ou"]
+            if "ou" in opts:
+                ou = opts["ou"]
             subject = Name([
                 x509.NameAttribute(NameOID.COUNTRY_NAME, ca['c']),
                 x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, ca['st']),
                 x509.NameAttribute(NameOID.LOCALITY_NAME, ca['l']),
                 x509.NameAttribute(NameOID.ORGANIZATION_NAME, ca['o']),
-                x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, ca['ou']),
-                x509.NameAttribute(NameOID.COMMON_NAME, name)])
+                x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, ou),
+                x509.NameAttribute(NameOID.COMMON_NAME, cn)])
         else:
             raise TypeError("Cannot read CA subject")
 
-        csr = service.request(subject, issuer_public_key,host)
+        csr = service.request(subject, authority.key.public_key(), service_host, "requireBaseDNS" in opts)
         cert = authority.sign_request(csr)
         service.certs.append(cert)
 
-        opts = services[name]
         service_context = Path('.') / opts['context']
         key_dir = service_context / opts['keys']
         cert_dir = service_context / opts['certs']
@@ -289,5 +299,13 @@ def sign_ca():
         with open(pass_dir/SSL_PASSPHRASE_FILE_NAME, "wb") as f:
             f.write(bytes(passphrase, encoding='utf8'))
 
-        service.dump_pem_cert(dir=key_dir,filename=f"{host}.pem",passphrase=passphrase)
-        authority.dump_cert(dir=cert_dir,filename=f"{ca['name']}-certificate.pem")
+        ssl_mode = "PEM"
+        if "sslMode" in opts:
+            ssl_mode = opts["sslMode"]
+        if ssl_mode == "PEM":
+            service.dump_pem_cert(dir=key_dir,filename=f"{service_host}.pem",passphrase=passphrase)
+        else:
+            service.dump_key(dir=key_dir,filename=f"{service_host}.key",passphrase=passphrase)
+            service.dump_cert(dir=key_dir,filename=f"{service_host}.crt")
+
+        authority.dump_cert(dir=cert_dir,filename=f"{ca['name']}-certificate.crt")
