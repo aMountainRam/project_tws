@@ -2,16 +2,30 @@ version: '3.8'
 
 services:
     mongodb:
-        image: mongo:latest
         hostname: database.servicetws.com
         networks:
             - ring
         ports:
             - 27017:27017
+        image: mongo:latest
         volumes:
             - mongodb-data:/data/db
-            - ./mongodb/mongod.conf:/etc/mongod.conf
+            - ./mongodb/mongo:/etc/mongo
             - ./mongodb/ssl:/etc/ssl
+            - ./mongodb/log:/var/log/mongodb
+        entrypoint: ["mongod"]
+        command: ["--config","/etc/mongo/mongod.conf"]
+        user: 1000:1000
+    backend:
+        hostname: backend.servicetws.com
+        networks:
+            - ring
+        build:
+            context: ./backend
+            args:
+                node_env: development
+        depends_on:
+            - mongodb
 
 networks:
     ring:
