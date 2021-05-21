@@ -6,8 +6,8 @@
     "type": "module",
     "scripts": {
         "start": "NODE_ENV=development DOTENV_CONFIG_PATH=config/.env.development nodemon -r dotenv/config src/server.js",
-        "test": "DOTENV_CONFIG_PATH=config/.env.test mocha --require dotenv/config --exit",
-        "test:coverage": "DOTENV_CONFIG_PATH=config/.env.test nyc mocha"
+        "test": "./config/run-tests.sh && DOTENV_CONFIG_PATH=config/.env.test mocha --require dotenv/config",
+        "test:coverage": "./config/run-tests.sh && DOTENV_CONFIG_PATH=config/.env.test nyc mocha"
     },
     "repository": {
         "type": "git",
@@ -71,6 +71,7 @@
             "lib/vendor"
         ],
         "timeout": "60000",
-        "recursive": true
+        "recursive": true,
+        "exit": true
     }
 }
