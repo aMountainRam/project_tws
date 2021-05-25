@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
         },
         bio: String,
         image: String,
-        hash: {
+        password: {
             type: String,
             set: setPassword,
         },
@@ -51,7 +51,7 @@ function setPassword(plaintext) {
     return security.hashSync(plaintext);
 }
 userSchema.methods.isValidPassword = function (plaintext) {
-    return security.compare(plaintext, this.hash);
+    return security.compare(plaintext, this.password);
 };
 
 mongoose.model("User", userSchema);

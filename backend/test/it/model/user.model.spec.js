@@ -17,7 +17,7 @@ describe("CRUD operations on user model", () => {
                     return new User({
                         username: randomString(16),
                         email: `${randomString(9)}@mail.com`,
-                        hash: "banana",
+                        password: "banana",
                     });
                 });
             await User.insertMany(users);
@@ -28,10 +28,10 @@ describe("CRUD operations on user model", () => {
             let user = new User({
                 username: randomString(16),
                 email: `${randomString(9)}@mail.com`,
-                hash: password,
+                password: password,
             });
-            expect(user.get("hash", String)).to.not.be.undefined;
-            expect(user.get("hash", String)).to.not.be.equal(password);
+            expect(user.get("password", String)).to.not.be.undefined;
+            expect(user.get("password", String)).to.not.be.equal(password);
             assert(await user.isValidPassword(password));
         });
         it("should throw when saving two users with the same username (and save one of them)", async () => {
