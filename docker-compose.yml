@@ -16,6 +16,17 @@ services:
         entrypoint: ["mongod"]
         command: ["--config","/etc/mongo/mongod.conf"]
         user: 1000:1000
+    session:
+        hostname: session.servicetws.com
+        networks:
+          - ring
+        ports:
+          - 6379:6379
+        image: redis:latest
+        volumes:
+          - ./session/config/redis.conf:/redis.conf
+          - ./session/ssl:/usr/local/etc/ssl
+        command: [ "redis-server", "/redis.conf" ]
     backend:
         hostname: backend.servicetws.com
         networks:

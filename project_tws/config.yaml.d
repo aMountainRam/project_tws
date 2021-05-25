@@ -22,6 +22,13 @@ services:
         ou: servicetws
         # [ passphraseMode: [random (default), nopassphrase, user] ]
         # [ outpassphrase: [ <filepath> (default to keys folder), stdout ]]
+    session:
+        context: session
+        sslMode: CRT
+        certs: ssl
+        keys: ssl
+        passphraseMode: nopassphrase
+        ou: servicetws
     backend:
         context: backend
         sslMode: CRT # [PEM,CRT]
