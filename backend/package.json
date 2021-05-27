@@ -20,7 +20,9 @@
     },
     "homepage": "https://github.com/aMountainRam/project_tws#readme",
     "dependencies": {
+        "async-redis": "^2.0.0",
         "bcrypt": "^5.0.1",
+        "cert-info": "^1.5.1",
         "chai-as-promised": "^7.1.1",
         "cookie-parser": "^1.4.5",
         "cors": "^2.8.5",
@@ -29,7 +31,9 @@
         "http-status-codes": "^2.1.4",
         "jsonwebtoken": "^8.5.1",
         "log4js": "^6.3.0",
+        "moment": "^2.29.1",
         "mongoose": "^5.12.10",
+        "redis": "^3.1.2",
         "uuid": "^8.3.2"
     },
     "devDependencies": {

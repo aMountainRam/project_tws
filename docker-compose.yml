@@ -24,9 +24,9 @@ services:
           - 6379:6379
         image: redis:latest
         volumes:
-          - ./session/config/redis.conf:/redis.conf
+          - ./session/config/redis.conf:/usr/local/etc/redis/redis.conf
           - ./session/ssl:/usr/local/etc/ssl
-        command: [ "redis-server", "/redis.conf" ]
+        command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
     backend:
         hostname: backend.servicetws.com
         networks:
