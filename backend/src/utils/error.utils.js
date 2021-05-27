@@ -13,3 +13,6 @@ const internalServerError = () => {
 export const handleBadRequest = (res,msg) => {
     res.status(StatusCodes.BAD_REQUEST).send(badRequest(msg));
 }
+export const handleUnauthorized = (res,msg) => {
+    res.status(StatusCodes.UNAUTHORIZED).send({message: msg})
+}

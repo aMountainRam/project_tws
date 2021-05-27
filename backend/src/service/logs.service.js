@@ -7,6 +7,10 @@ logger.configure({
             appenders: ["console"],
             level: "info"
         },
+        session: {
+            appenders: ["console"],
+            level: "info"
+        },
         default: {
             appenders: ["console"],
             level: "info",
