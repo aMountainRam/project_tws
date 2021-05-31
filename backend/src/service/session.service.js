@@ -1,6 +1,6 @@
 import redis from "redis";
 import logger from "log4js";
-import sslContext from "../../src/config/ssl.config.js";
+import sslContext from "../config/ssl.config.js";
 import asyncRedis from "async-redis";
 
 const env = process.env;

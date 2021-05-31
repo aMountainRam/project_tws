@@ -1,4 +1,4 @@
-import { User } from "../../src/model/user.model.js";
+import { User } from "../model/user.model.js";
 import logger from "log4js";
 
 const log = logger.getLogger("database");

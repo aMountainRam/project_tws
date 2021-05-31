@@ -43,11 +43,6 @@ services:
             - ring
         build:
             context: ./frontend
-        volumes:
-            - ./frontend/conf/nginx.conf:/etc/nginx/nginx.conf
-            - ./frontend/ssl:/etc/ssl/certs
-            - ./frontend/includes/mime.types /etc/nginx/includes/mime.types
-            - ./frontend/includes/proxy.conf /etc/nginx/includes/proxy.conf
         depends_on:
             - backend
 
@@ -58,12 +53,8 @@ services:
         ports:
             - 80:80
             - 443:443
-        image: nginx:latest
-        volumes:
-            - ./reverse/conf/nginx.conf:/etc/nginx/nginx.conf
-            - ./reverse/ssl:/etc/ssl/certs
-            - ./reverse/includes/mime.types /etc/nginx/includes/mime.types
-            - ./reverse/includes/proxy.conf /etc/nginx/includes/proxy.conf
+        build:
+            context: ./reverse
         depends_on:
             - backend
             - frontend

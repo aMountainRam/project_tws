@@ -13,6 +13,19 @@ services:
         certs: ssl
         keys: ssl
         ou: servicetws
+    reverse:
+        context: reverse
+        sslMode: CRT # [PEM,CRT]
+        certs: ssl
+        keys: ssl
+        ou: servicetws
+        requireBaseDNS: true
+    frontend:
+        context: frontend
+        sslMode: CRT # [PEM,CRT]
+        certs: ssl
+        keys: ssl
+        ou: servicetws
     database:
         context: mongodb
         sslMode: PEM # [PEM,CRT]

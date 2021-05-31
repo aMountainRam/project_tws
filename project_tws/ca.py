@@ -70,6 +70,7 @@ class KeyPairHolder:
         dnss = [x509.DNSName(f"{service_host}"), x509.DNSName(f"www.{service_host}")]
         if include_host:
             dnss.append(x509.DNSName(config["domain"]["name"]))
+            dnss.append(x509.DNSName(f"www.{config['domain']['name']}"))
         # notice that in rfc3280 nonRepudiation == contentCommitment
         csr = x509.CertificateSigningRequestBuilder().subject_name(subject
             ).add_extension(x509.AuthorityKeyIdentifier.from_issuer_public_key(ca_public_key),critical=False

@@ -6,11 +6,12 @@ RUN npm i
 
 ARG node_env
 ENV NODE_ENV=${node_env}
-ENV DOTENV_CONFIG_PATH=./.env.${node_env}
+ENV DOTENV_CONFIG_PATH=./.env.$NODE_ENV
 
-COPY . .
-COPY ./config/run.${node_env}.sh .
+COPY ./src .
+COPY ./ssl ./ssl
+COPY ./config ./
 RUN chmod +x ./*.sh
 EXPOSE 8443
 ENTRYPOINT ["bash"]
-CMD ["./run.${node_env}.sh"]
+CMD ["./run.sh"]

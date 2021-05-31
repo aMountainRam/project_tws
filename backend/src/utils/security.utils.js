@@ -13,7 +13,9 @@ const cookieOpts = {
     domain: "servicetws.com",
     secure: true,
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: "Strict",
+    path: process.env.API_CONTEXT,
+    maxAge: sessionRepository.refreshDefaultExpiration * 1_000,
 };
 const jwtOpts = {
     algorithm: "RS256",
@@ -71,6 +73,7 @@ const generateTokens = (subject) => {
         accessToken: jwt.sign(payload, sslContext, jwtOpts),
         refreshToken: uuid(),
         tokenType: "Bearer",
+        expiresIn: jwtOpts.expiresIn,
     };
 };
 
@@ -116,7 +119,7 @@ const isRefreshable = async (token) => {
 const sendAuthorized = (res, { refreshToken, ...rest }) => {
     res.status(StatusCodes.OK);
     res.cookie(refreshTokenCookieKey, refreshToken, cookieOpts);
-    res.send({ ...rest });
+    res.send({ ...rest, refreshToken });
 };
 
 /**

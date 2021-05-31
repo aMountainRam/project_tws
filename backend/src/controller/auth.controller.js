@@ -42,9 +42,10 @@ const login = async (req, res) => {
     }
     // STEP 2.
     let id = false;
+    let token = undefined;
     if (req.cookies && req.cookies[security.refreshTokenCookieKey]) {
-        let token = req.cookies.get(security.refreshTokenCookieKey);
-        id = security.isRefreshable(token);
+        token = req.cookies[security.refreshTokenCookieKey];
+        id = await security.isRefreshable(token);
     }
     if (id) {
         let authentication = security.refresh(token, id);

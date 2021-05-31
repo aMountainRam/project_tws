@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import sslContext from "../config/ssl.config.js";
 import router from "../router/app.router.js";
 
+const log = logger.getLogger("events");
+
 const app = express();
 
 /**
@@ -16,7 +18,7 @@ const corsOptions = {
         /^(https?:\/\/(?:.+\.)?localhost(?::\d{1,5})?)$/,
         /^(https?:\/\/(?:.+\.)?servicetws\.com(?::\d{1,5})?)$/,
     ],
-    optionsSuccessStatus: 200,
+    credentials: true,
 };
 app.use(cors(corsOptions));
 
@@ -25,18 +27,16 @@ app.use(cors(corsOptions));
  */
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(cookieParser())
+app.use(cookieParser());
 
 /**
  * ROUTER
  */
-app.use("/api",router);
+app.use(process.env.API_CONTEXT, router);
 
 const PORT = process.env.NODE_PORT || 8443;
-const log = logger.getLogger("events");
 const server = https
     .createServer(sslContext, app)
-    .listen(PORT, () => log.info(`Running on port ${PORT}`))
-    .addListener("error", (err) => log.warn(err));
+    .listen(PORT, () => log.info(`Running on port ${PORT}`));
 
 export const serverShutdown = server.close;
