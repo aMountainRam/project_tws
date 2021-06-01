@@ -92,10 +92,7 @@ describe("attempt login", () => {
         let cookie = res.cookies[security.refreshTokenCookieKey];
         req = httpMocks.createRequest({
             cookies: {
-                [security.refreshTokenCookieKey]: cookie,
-                get: function (key) {
-                    return this[key].value;
-                },
+                [security.refreshTokenCookieKey]: cookie.value,
             },
         });
         let res2 = httpMocks.createResponse();

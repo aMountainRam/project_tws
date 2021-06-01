@@ -2,7 +2,7 @@ FROM node:14
 
 WORKDIR /usr/src/app
 COPY ./package*.json ./
-RUN npm i
+RUN ["yarn", "install", "--prod"]
 
 ARG node_env
 ENV NODE_ENV=${node_env}

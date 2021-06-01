@@ -5,7 +5,7 @@
     "main": "src/server.js",
     "type": "module",
     "scripts": {
-        "start": "NODE_ENV=development DOTENV_CONFIG_PATH=config/.env.development nodemon -r dotenv/config src/server.js",
+        "start": "NODE_ENV=local DOTENV_CONFIG_PATH=config/.env.local nodemon -r dotenv/config src/server.js",
         "test": "./config/run-tests.sh && DOTENV_CONFIG_PATH=config/.env.test mocha --require dotenv/config",
         "test:coverage": "./config/run-tests.sh && DOTENV_CONFIG_PATH=config/.env.test nyc mocha"
     },

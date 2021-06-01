@@ -8,13 +8,13 @@ import userRepository from "../repository/user.repository.js";
 import sessionRepository from "../repository/session.repository.js";
 
 const saltRounds = 10;
-const refreshTokenCookieKey = "servicetws-refresh-token";
+const refreshTokenCookieKey = "__Secure-servicetws-refresh-token";
 const cookieOpts = {
     domain: "servicetws.com",
     secure: true,
     httpOnly: true,
-    sameSite: "Strict",
-    path: process.env.API_CONTEXT,
+    sameSite: process.env.COOKIE_SAMESITE,
+    path: `${process.env.API_CONTEXT}/auth/token`,
     maxAge: sessionRepository.refreshDefaultExpiration * 1_000,
 };
 const jwtOpts = {
@@ -25,8 +25,8 @@ const jwtOpts = {
 
 const parseTokenFromRequest = (req) => {
     if (
-        req.get("authorization") &&
-        req.get("authorization").match(/^Bearer .(.*)$/)
+        req.headers.authorization &&
+        req.headers.authorization.match(/^Bearer .(.*)$/)
     ) {
         let accessToken = req.get("authorization").split(" ")[1];
         return isValid(accessToken);

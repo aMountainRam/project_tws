@@ -4,7 +4,7 @@ import security from "../utils/security.utils.js";
 
 const refreshTokens = async (req, res) => {
     if (req.cookies && req.cookies[security.refreshTokenCookieKey]) {
-        let token = req.cookies.get(security.refreshTokenCookieKey);
+        let token = req.cookies[security.refreshTokenCookieKey];
         let id = await security.isRefreshable(token);
         if (id) {
             let authentication = security.refresh(token, id);
@@ -18,7 +18,7 @@ const refreshTokens = async (req, res) => {
 const logout = async (req, res) => {
     let preAuthorized = security.parseTokenFromRequest(req);
     if (preAuthorized && preAuthorized.sub) {
-        security.logout(sub);
+        security.logout(preAuthorized.sub);
     }
 
     return res.status(StatusCodes.OK).send();
@@ -40,18 +40,18 @@ const login = async (req, res) => {
         res.status(StatusCodes.OK).send();
         return;
     }
-    // STEP 2.
-    let id = false;
-    let token = undefined;
-    if (req.cookies && req.cookies[security.refreshTokenCookieKey]) {
-        token = req.cookies[security.refreshTokenCookieKey];
-        id = await security.isRefreshable(token);
-    }
-    if (id) {
-        let authentication = security.refresh(token, id);
-        security.sendAuthorized(res, authentication);
-        return;
-    }
+    // // STEP 2.
+    // let id = false;
+    // let token = undefined;
+    // if (req.cookies && req.cookies[security.refreshTokenCookieKey]) {
+    //     token = req.cookies[security.refreshTokenCookieKey];
+    //     id = await security.isRefreshable(token);
+    // }
+    // if (id) {
+    //     let authentication = security.refresh(token, id);
+    //     security.sendAuthorized(res, authentication);
+    //     return;
+    // }
 
     // STEP 3.
     if (
