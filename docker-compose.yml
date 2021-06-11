@@ -57,7 +57,7 @@ services:
             context: ./reverse
         depends_on:
             - backend
-            - frontend
+            #- frontend
 
 networks:
     ring:

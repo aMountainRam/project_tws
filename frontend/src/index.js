@@ -1,12 +1,13 @@
 import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom";
-import { CookiesProvider } from "react-cookie";
 import ServiceTws from "./servicetws.app.jsx";
+import { Provider } from "react-redux";
+import store from "./store";
 
 ReactDOM.render(
-    <CookiesProvider>
+    <Provider store={store}>
         <ServiceTws />
-    </CookiesProvider>,
+    </Provider>,
     document.getElementById("root")
 );

@@ -13,6 +13,7 @@ services:
         certs: ssl
         keys: ssl
         ou: servicetws
+        requireBaseDNS: true
     reverse:
         context: reverse
         sslMode: CRT # [PEM,CRT]
@@ -33,6 +34,7 @@ services:
         keys: ssl/keys
         passphraseMode: nopassphrase
         ou: servicetws
+        requireBaseDNS: true
         # [ passphraseMode: [random (default), nopassphrase, user] ]
         # [ outpassphrase: [ <filepath> (default to keys folder), stdout ]]
     session:
@@ -48,6 +50,7 @@ services:
         certs: ssl
         keys: ssl
         ou: servicetws
+        requireBaseDNS: true
 
 ca:
     context: ca

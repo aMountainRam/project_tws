@@ -9,12 +9,13 @@ import sessionRepository from "../repository/session.repository.js";
 
 const saltRounds = 10;
 const refreshTokenCookieKey = "__Secure-servicetws-refresh-token";
+const {COOKIE_DOMAIN,COOKIE_SAMESITE,API_CONTEXT} = process.env;
 const cookieOpts = {
-    domain: "servicetws.com",
+    domain: COOKIE_DOMAIN,
     secure: true,
     httpOnly: true,
-    sameSite: process.env.COOKIE_SAMESITE,
-    path: `${process.env.API_CONTEXT}/auth/token`,
+    sameSite: COOKIE_SAMESITE,
+    path: `${API_CONTEXT}/auth/token`,
     maxAge: sessionRepository.refreshDefaultExpiration * 1_000,
 };
 const jwtOpts = {

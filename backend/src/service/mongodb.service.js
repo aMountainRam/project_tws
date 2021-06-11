@@ -4,11 +4,11 @@ import sslContext from "../config/ssl.config.js";
 
 import "../model/user.model.js";
 
-const env = process.env;
+const {DBHOST, DBPORT, DBNAME} = process.env;
 const context = {
-    host: env.DBHOST,
-    port: env.DBPORT,
-    name: env.DBNAME,
+    host: DBHOST,
+    port: DBPORT,
+    name: DBNAME,
     options: {
         poolSize: 10,
         authMechanism: "MONGODB-X509",
